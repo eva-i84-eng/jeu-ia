@@ -43,11 +43,17 @@ pour : comment le combo est-il remis à zéro (modification de l'initialisation 
 - Mon prompt en mode Plan :
 
 ```
-(colle-le ici)
+Je veux ajouter un cristal de glace, plus rare que le doré. Quand on l'attrape, tous les
+objets ralentissent pendant 4 secondes, puis reprennent leur vitesse. Respecte les règles de
+.github/copilot-instructions.md. Propose un plan sans modifier le code.
 ```
 
 - Le plan est dans le fichier `PLAN.md`.
-- Ce que j'ai changé dans le plan avant de le valider (étape retirée, ajoutée, contrainte) et pourquoi :
+- Ce que j'ai changé dans le plan avant de le valider (étape retirée, ajoutée, contrainte) et pourquoi : 
+ETAPE RETIREE : Modifier audio.js pour ajouter un son de capture utilisant Web Audio.
+CONTRAINTE : la durée du ralentissement dans config.js
+il y a deja un son quand on attrappe un cristal pas besoin d'en mettre un autre. La duree du ralentissement peut augmenter la difficultée du jeu, demander un challenge plus important et donc être interessante.
+
 
 ## Défi 4 - Agent
 
