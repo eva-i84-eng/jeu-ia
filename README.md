@@ -1,17 +1,19 @@
-# Pluie de Néon - jeu modèle
+# La pluie de cerisiers - jeu modèle
 
 Jeu d'arcade web en HTML, CSS et JavaScript pour le cours Outils IA, Bachelor 1, Ynov. Ce dépôt est la base de départ des défis GitHub Copilot : le jeu fonctionne déjà, à toi de l'améliorer.
 
 ## Le but
 
-Guide le petit slime en bas de l'écran avec la souris et attrape les cristaux qui tombent. Évite les bombes. Enchaîne les prises pour faire monter le multiplicateur.
+Guide le petit slime en bas de l'écran avec la souris. Attrape les branches de cerisier et les sabres, puis évite les masques oni.
 
-- Cristal cyan : 10 points.
-- Cristal doré, plus rare : 50 points.
-- Bombe : tu perds une vie et ton combo retombe à zéro.
+- Branche de cerisier : 10 points.
+- Sabre, plus rare : 50 points.
+- Masque oni : tu perds une vie et ton combo retombe à zéro.
 - Trois vies au départ.
-- Le combo reste actif 3 secondes. À partir de 3 cristaux, le multiplicateur passe à x2, puis x3, x4 et x5.
-- Toutes les 18 secondes, le niveau augmente : les objets tombent plus vite, arrivent plus souvent et les bombes se multiplient.
+- Un casque de samourai apparait quand une vie est perdue. Il absorbe le prochain masque oni pendant cinq secondes.
+- Le torii restaure les vies apres 100 objets tombes. Si aucune vie n'a ete perdue, il donne aussi deux casques successifs.
+- Le combo reste actif 3 secondes. À partir de 3 prises, le multiplicateur passe à x2, puis x3, x4 et x5.
+- Toutes les 18 secondes, le niveau augmente : les objets tombent plus vite, arrivent plus souvent et les masques oni se multiplient.
 - Le meilleur score est conservé dans le navigateur avec `localStorage`.
 
 ## Lancer le jeu
@@ -34,7 +36,7 @@ Pour publier sur GitHub Pages : dans le dépôt, **Settings**, **Pages**, **Depl
 | `config.js` | couleurs, vitesses, vies, raretés, réglages du jeu |
 | `audio.js` | sons synthétisés avec l'API Web Audio, sans fichier audio |
 | `effets.js` | particules, textes flottants, secousse d'écran et flash |
-| `dessin.js` | décor néon, slime, cristaux et bombes |
+| `dessin.js` | décor de coucher de soleil, bambous, slime et objets |
 | `jeu.js` | état, entrées clavier et tactile, collisions, score, écrans, boucle |
 | `index.html`, `style.css` | la page, les écrans et l'interface |
 | `JOURNAL.md` | tes prompts et le compte rendu des défis |

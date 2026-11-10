@@ -1,24 +1,30 @@
-// Réglages de Pluie de Néon.
+// Réglages de la pluie de cerisiers.
 // Modifie ces valeurs pour équilibrer le jeu sans toucher au reste du code.
 
 const LARGEUR = 480; // largeur logique du canvas
 const HAUTEUR = 720; // hauteur logique du canvas
 
 // Types d'objets qui tombent.
-const CRISTAL = "cristal";
-const BOMBE = "bombe";
-const DORE = "dore";
+const BRANCHE = "branche";
+const ONI = "oni";
+const SABRE = "sabre";
+const TORII = "torii";
 
 const COULEURS = {
-  fond: "#05030f",
-  cyan: "#28f0ff",
-  magenta: "#ff3ea5",
-  or: "#ffd166",
-  rouge: "#ff4d6d",
+  fond: "#26152c",
+  cyan: "#e85d75",
+  magenta: "#6d1f45",
+  or: "#bfc4cf",
+  rouge: "#e53232",
+  branche: "#482719",
+  fleur: "#d9384b",
+  violet: "#6e3aa8",
+  noir: "#120d18",
+  bambou: "#11130f",
   slime: "#9dfc8a",
   slimeOmbre: "#39b873",
   blanc: "#f5f7ff",
-  grille: "rgba(40, 240, 255, 0.16)"
+  grille: "rgba(111, 44, 44, 0.2)"
 };
 
 const REGLAGES = {
@@ -31,8 +37,10 @@ const REGLAGES = {
   dureeNiveau: 18,       // secondes avant d'accélérer
   dureeCombo: 3,         // secondes pour enchaîner
   multiplicateurMax: 5,
-  hasardBombe: 0.14,
-  hasardDore: 0.05,
+  hasardOni: 0.14,
+  hasardSabre: 0.05,
+  dureeBouclier: 5,
+  seuilTorii: 100,
   largeurPanier: 86,
   hauteurPanier: 28,
   margePanier: 12

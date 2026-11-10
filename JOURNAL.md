@@ -60,13 +60,14 @@ il y a deja un son quand on attrappe un cristal pas besoin d'en mettre un autre.
 - Mon prompt en mode Agent :
 
 ```
-(colle-le ici)
+applique PLAN.md sur jeu-ia
+modifi donc config.js et jeu.js et dessin.js comme demandé dans PLAN.md sans rien faire d'autres
 ```
 
-- Fichiers que l'agent a modifiés :
-- Ce que j'ai relu dans les changements avant d'accepter :
-- Ce que j'ai refusé, corrigé ou fait refaire :
-- Mon jeu après l'agent (une phrase) :
+- Fichiers que l'agent a modifiés : config.js, jeu.js et dessin.js
+- Ce que j'ai relu dans les changements avant d'accepter : arrangement de syntaxe et autorisation de vérifier si les fichiers modifiés étaient bien uniquement les trois cilbés et pas d'autres
+- Ce que j'ai refusé, corrigé ou fait refaire : refusé : l'analyseur du workspace
+- Mon jeu après l'agent (une phrase) : Le jeu marche et même si les modification ne sont pas très visibles (ce sont principalement des modifications de détails comme les petits éclats de la glace bleu claire pas exemple) tout fonctionne. 
 
 ## Défi 5 - Pull request et revue
 
