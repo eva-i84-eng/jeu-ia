@@ -31,7 +31,7 @@ const REGLAGES = {
   dureeNiveau: 18,       // secondes avant d'accélérer
   dureeCombo: 3,         // secondes pour enchaîner
   multiplicateurMax: 5,
-  hasardBombe: 0.20,
+  hasardBombe: 0.14,
   hasardDore: 0.05,
   largeurPanier: 86,
   hauteurPanier: 28,

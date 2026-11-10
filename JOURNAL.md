@@ -23,12 +23,20 @@ Règle : tu colles ici le texte exact de tes prompts (copier-coller, pas de capt
 - Ma question (prompt exact) :
 
 ```
-(colle-le ici)
+Je suis en Bachelor 1, j'ai fait un peu de Go. Explique jeu.js : comment
+fonctionnent la boucle du jeu, la chute des objets et la détection de l'objet attrapé ?
+Une phrase par partie.
+
+la deuxième : 
+comment le combo est-il remis
+à zéro
 ```
 
-- Une affirmation de la réponse que j'ai vérifiée :
-- Comment je l'ai vérifiée (un changement dans le code, un test dans le jeu) :
-- Résultat : exacte, fausse ou incomplète :
+- Une affirmation de la réponse que j'ai vérifiée : copilot a précisé : "Boucle du jeu : jeu.js utilise généralement requestAnimationFrame pour mettre à jour l’état, dessiner le jeu et relancer la boucle à chaque image"
+Mais aussi : comment le combo est-il remis à zéro
+- Comment je l'ai vérifiée (un changement dans le code, un test dans le jeu) : vérification de l'utilisation de requestAnimationFrame dans jeu.js
+pour : comment le combo est-il remis à zéro (modification de l'initialisation à 0 de combo : initialiser à 2 par exemple)
+- Résultat : exacte, fausse ou incomplète : le combo commence à 2 si le combo est initialisé à 2 donc on remet à 0 pour qu'il commence à 0
 
 ## Défi 3 - Plan
 
