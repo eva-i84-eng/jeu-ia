@@ -26,6 +26,7 @@ let vies = REGLAGES.viesDepart;
 let niveau = 1;
 let tempsJeu = 0;
 let combo = 0;
+let cristaux = 0;
 let chronoCombo = 0;
 let objets = [];
 let chronoSpawn = 0;
@@ -56,6 +57,7 @@ function majHud() {
 function demarrerPartie() {
   preparerAudio();
   etat = "jeu";
+  cristaux = 0;
   score = 0; vies = REGLAGES.viesDepart; niveau = 1; tempsJeu = 0;
   combo = 0; chronoCombo = 0; objets = []; chronoSpawn = 0.45;
   panier.x = LARGEUR / 2 - panier.largeur / 2; panier.cibleX = null; panier.vitesse = 0;
@@ -73,6 +75,8 @@ function terminerPartie() {
   secouer(20);
   flasher(COULEURS.blanc, 0.4);
   finScore.textContent = score;
+  // compte les cristaux attrapés dans la variable cristaux
+  finScore.textContent += " (Cristaux chopés : " + cristaux + ")";
   finRecord.textContent = record;
   badgeRecord.classList.toggle("cache", !nouveauRecord);
   scene.dataset.etat = "fin";
@@ -123,6 +127,8 @@ function toucherObjet(objet) {
   const points = (objet.type === DORE ? 50 : 10) * multi;
   const couleur = objet.type === DORE ? COULEURS.or : COULEURS.cyan;
   score += points;
+  // compte les cristaux attrapés dans la variable cristaux
+  if (objet.type === CRISTAL) cristaux += 1;
   creerParticules(objet.x, objet.y, couleur, objet.type === DORE ? 24 : 14, 280);
   ajouterTexte(objet.x, objet.y - 10, "+" + points, couleur);
   if (objet.type === DORE) { sonDore(); flasher(COULEURS.or, 0.18); }

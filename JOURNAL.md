@@ -1,8 +1,8 @@
 # Journal de bord
 
-Nom et prénom : 
-Dépôt : 
-Outil utilisé (Copilot, modèle affiché) : 
+Nom et prénom : Imbert Eva
+Dépôt : https://github.com/eva-i84-eng/jeu-ia
+Outil utilisé (Copilot, modèle affiché) : copilot
 
 Règle : tu colles ici le texte exact de tes prompts (copier-coller, pas de capture). Une entrée par défi. Ce que tu n'as pas gardé compte autant que ce que tu as gardé.
 

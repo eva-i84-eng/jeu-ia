@@ -15,6 +15,8 @@ const COULEURS = {
   magenta: "#ff3ea5",
   or: "#ffd166",
   rouge: "#ff4d6d",
+  slime: "#9dfc8a",
+  slimeOmbre: "#39b873",
   blanc: "#f5f7ff",
   grille: "rgba(40, 240, 255, 0.16)"
 };
@@ -31,8 +33,8 @@ const REGLAGES = {
   multiplicateurMax: 5,
   hasardBombe: 0.14,
   hasardDore: 0.05,
-  largeurPanier: 96,
-  hauteurPanier: 16,
+  largeurPanier: 86,
+  hauteurPanier: 28,
   margePanier: 12
 };
 

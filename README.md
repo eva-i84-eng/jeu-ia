@@ -4,7 +4,7 @@ Jeu d'arcade web en HTML, CSS et JavaScript pour le cours Outils IA, Bachelor 1,
 
 ## Le but
 
-Déplace le rail néon en bas de l'écran et attrape les cristaux qui tombent. Évite les bombes. Enchaîne les prises pour faire monter le multiplicateur.
+Guide le petit slime en bas de l'écran avec la souris et attrape les cristaux qui tombent. Évite les bombes. Enchaîne les prises pour faire monter le multiplicateur.
 
 - Cristal cyan : 10 points.
 - Cristal doré, plus rare : 50 points.
@@ -23,7 +23,7 @@ Pour publier sur GitHub Pages : dans le dépôt, **Settings**, **Pages**, **Depl
 ## Commandes
 
 - Flèches gauche et droite, ou touches A et D.
-- Souris ou doigt : le rail suit la position horizontale.
+- Souris ou doigt : le slime suit la position horizontale.
 - Entrée ou Espace : lancer la partie, puis rejouer.
 - Bouton `SON ACTIF` / `SON COUPÉ` : couper ou remettre les sons.
 
@@ -34,7 +34,7 @@ Pour publier sur GitHub Pages : dans le dépôt, **Settings**, **Pages**, **Depl
 | `config.js` | couleurs, vitesses, vies, raretés, réglages du jeu |
 | `audio.js` | sons synthétisés avec l'API Web Audio, sans fichier audio |
 | `effets.js` | particules, textes flottants, secousse d'écran et flash |
-| `dessin.js` | décor néon, rail, cristaux et bombes |
+| `dessin.js` | décor néon, slime, cristaux et bombes |
 | `jeu.js` | état, entrées clavier et tactile, collisions, score, écrans, boucle |
 | `index.html`, `style.css` | la page, les écrans et l'interface |
 | `JOURNAL.md` | tes prompts et le compte rendu des défis |
@@ -45,7 +45,7 @@ Le JavaScript fait moins de 600 lignes au total. Il est découpé en fichiers co
 
 ## Personnaliser
 
-La plupart des réglages sont dans `config.js` : palette, vitesse du rail, vitesse de chute, intervalle entre les objets, durée d'un niveau, durée du combo, nombre de vies. Commence par là avant de toucher à la logique.
+La plupart des réglages sont dans `config.js` : palette, vitesse du slime, vitesse de chute, intervalle entre les objets, durée d'un niveau, durée du combo, nombre de vies. Commence par là avant de toucher à la logique.
 
 Pour vérifier la syntaxe après une modification :
 
