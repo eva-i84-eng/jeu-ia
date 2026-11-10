@@ -1,61 +1,66 @@
-// Dessin du décor, du panier et des objets. Tout est tracé au canvas.
+// Dessin du décor, du slime et des objets. Tout est tracé au canvas.
 
-const etoiles = [];
-for (let i = 0; i < 64; i++) {
-  etoiles.push({ x: Math.random() * LARGEUR, y: Math.random() * HAUTEUR * 0.6, taille: Math.random() + 0.5, phase: Math.random() * 6.28 });
+function dessinerBambou(ctx, x, cote) {
+  ctx.save();
+  ctx.translate(x, HAUTEUR);
+  ctx.strokeStyle = COULEURS.bambou;
+  ctx.lineWidth = 9;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.quadraticCurveTo(cote * 7, -HAUTEUR * 0.42, cote * 2, -HAUTEUR * 0.86);
+  ctx.stroke();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#272a1b";
+  for (let i = 0; i < 6; i++) {
+    const y = -40 - i * 105;
+    ctx.beginPath();
+    ctx.moveTo(-4 + cote * i * 0.4, y);
+    ctx.lineTo(5 + cote * i * 0.4, y);
+    ctx.stroke();
+  }
+  ctx.restore();
 }
 function dessinerFond(ctx, temps) {
   const degrade = ctx.createLinearGradient(0, 0, 0, HAUTEUR);
-  degrade.addColorStop(0, "#170b32");
-  degrade.addColorStop(0.52, COULEURS.fond);
-  degrade.addColorStop(1, "#02010a");
+  degrade.addColorStop(0, "#32143b");
+  degrade.addColorStop(0.48, "#d75b55");
+  degrade.addColorStop(1, "#f08a58");
   ctx.fillStyle = degrade;
   ctx.fillRect(0, 0, LARGEUR, HAUTEUR);
 
-  const horizon = HAUTEUR * 0.58;
+  const horizon = HAUTEUR * 0.62;
+  const soleil = ctx.createRadialGradient(LARGEUR / 2, horizon * 0.74, 8, LARGEUR / 2, horizon * 0.74, 90);
+  soleil.addColorStop(0, "#ff3232");
+  soleil.addColorStop(0.75, "#e51e2a");
+  soleil.addColorStop(1, "rgba(229, 30, 42, 0)");
+  ctx.fillStyle = soleil;
+  ctx.beginPath();
+  ctx.arc(LARGEUR / 2, horizon * 0.74, 58, 0, Math.PI * 2);
+  ctx.fill();
+
   const halo = ctx.createRadialGradient(LARGEUR / 2, horizon, 4, LARGEUR / 2, horizon, LARGEUR * 0.8);
-  halo.addColorStop(0, "rgba(255, 62, 165, 0.2)");
-  halo.addColorStop(0.5, "rgba(122, 92, 255, 0.07)");
-  halo.addColorStop(1, "rgba(0, 0, 0, 0)");
+  halo.addColorStop(0, "rgba(255, 196, 120, 0.3)");
+  halo.addColorStop(1, "rgba(255, 196, 120, 0)");
   ctx.fillStyle = halo;
   ctx.fillRect(0, 0, LARGEUR, HAUTEUR);
 
-  for (const etoile of etoiles) {
-    const lueur = 0.2 + 0.4 * Math.abs(Math.sin(temps + etoile.phase));
-    ctx.fillStyle = "rgba(245, 247, 255, " + lueur + ")";
-    ctx.fillRect(etoile.x, etoile.y, etoile.taille, etoile.taille);
-  }
-
-  ctx.strokeStyle = COULEURS.grille;
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  for (let i = -9; i <= 9; i++) {
-    ctx.moveTo(LARGEUR / 2, horizon);
-    ctx.lineTo(LARGEUR / 2 + i * 78, HAUTEUR);
-  }
-  ctx.stroke();
-  for (let i = 0; i < 14; i++) {
-    const avancee = (i + (temps * 0.3) % 1) / 14;
-    const y = horizon + Math.pow(avancee, 2.3) * (HAUTEUR - horizon);
-    ctx.globalAlpha = 0.12 + avancee * 0.5;
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(LARGEUR, y);
-    ctx.stroke();
-  }
-  ctx.globalAlpha = 1;
+  ctx.fillStyle = "rgba(83, 34, 32, 0.35)";
+  ctx.fillRect(0, horizon, LARGEUR, HAUTEUR - horizon);
+  dessinerBambou(ctx, 22, 1);
+  dessinerBambou(ctx, LARGEUR - 22, -1);
 
   ctx.save();
-  ctx.shadowColor = COULEURS.magenta;
+  ctx.shadowColor = "#ff8965";
   ctx.shadowBlur = 16;
-  ctx.strokeStyle = "rgba(255, 62, 165, 0.5)";
+  ctx.strokeStyle = "rgba(255, 174, 112, 0.55)";
   ctx.beginPath();
   ctx.moveTo(0, horizon);
   ctx.lineTo(LARGEUR, horizon);
   ctx.stroke();
   ctx.restore();
 }
-function dessinerPanier(ctx, panier, temps) {
+function dessinerPanier(ctx, panier, temps, bouclierActif) {
   const inclinaison = Math.max(-0.16, Math.min(0.16, panier.vitesse * 0.0002));
   const pulsation = 1 + 0.04 * Math.sin(temps * 5);
   const largeur = panier.largeur * pulsation;
@@ -100,67 +105,195 @@ function dessinerPanier(ctx, panier, temps) {
   ctx.ellipse(-largeur * 0.36, hauteur * 0.12, 5, 2.5, 0, 0, Math.PI * 2);
   ctx.ellipse(largeur * 0.36, hauteur * 0.12, 5, 2.5, 0, 0, Math.PI * 2);
   ctx.fill();
+  if (bouclierActif) {
+    ctx.fillStyle = COULEURS.noir;
+    ctx.strokeStyle = COULEURS.violet;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-largeur * 0.34, -hauteur * 0.75);
+    ctx.quadraticCurveTo(0, -hauteur * 1.65, largeur * 0.34, -hauteur * 0.75);
+    ctx.lineTo(largeur * 0.27, -hauteur * 0.42);
+    ctx.lineTo(-largeur * 0.27, -hauteur * 0.42);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = COULEURS.violet;
+    ctx.fillRect(-largeur * 0.39, -hauteur * 0.52, largeur * 0.78, 4);
+    ctx.beginPath();
+    ctx.moveTo(-largeur * 0.36, -hauteur * 0.65);
+    ctx.lineTo(-largeur * 0.52, -hauteur * 0.38);
+    ctx.moveTo(largeur * 0.36, -hauteur * 0.65);
+    ctx.lineTo(largeur * 0.52, -hauteur * 0.38);
+    ctx.stroke();
+  }
   ctx.restore();
 }
-function dessinerCristal(ctx, objet, temps) {
+function dessinerBranche(ctx, objet, temps) {
   const r = objet.rayon;
-  const dore = objet.type === DORE;
-  const couleur = dore ? COULEURS.or : COULEURS.cyan;
   const battement = 1 + 0.06 * Math.sin(temps * 5 + objet.pulsation);
   ctx.rotate(objet.rotation);
   ctx.scale(battement, battement);
-  ctx.shadowColor = couleur;
-  ctx.shadowBlur = 20;
+  ctx.strokeStyle = COULEURS.branche;
+  ctx.lineWidth = 5;
+  ctx.lineCap = "round";
   ctx.beginPath();
-  ctx.moveTo(0, -r);
-  ctx.lineTo(r * 0.62, 0);
-  ctx.lineTo(0, r);
-  ctx.lineTo(-r * 0.62, 0);
-  ctx.closePath();
-  ctx.fillStyle = dore ? "rgba(255, 209, 102, 0.22)" : "rgba(40, 240, 255, 0.2)";
-  ctx.fill();
-  ctx.strokeStyle = couleur;
-  ctx.lineWidth = 2;
+  ctx.moveTo(-r * 1.5, r * 0.85);
+  ctx.bezierCurveTo(-r * 0.85, r * 0.35, -r * 0.55, -r * 0.8, 0, -r * 0.2);
+  ctx.bezierCurveTo(r * 0.55, r * 0.35, r * 0.65, -r * 0.85, r * 1.45, -r * 0.95);
   ctx.stroke();
-  ctx.fillStyle = COULEURS.blanc;
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = "#6b3b25";
   ctx.beginPath();
-  ctx.arc(0, 0, r * 0.28, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.moveTo(-r * 0.65, r * 0.35);
+  ctx.quadraticCurveTo(-r * 1.05, -r * 0.25, -r * 1.25, -r * 0.8);
+  ctx.moveTo(r * 0.45, r * 0.12);
+  ctx.quadraticCurveTo(r * 0.95, r * 0.1, r * 1.15, r * 0.65);
+  ctx.stroke();
+  ctx.fillStyle = COULEURS.fleur;
+  const fleurs = [
+    { x: -r * 1.5, y: r * 0.85 },
+    { x: -r * 1.25, y: -r * 0.8 },
+    { x: r * 1.45, y: -r * 0.95 },
+    { x: r * 1.15, y: r * 0.65 }
+  ];
+  for (const fleur of fleurs) {
+    ctx.beginPath();
+    ctx.arc(fleur.x - r * 0.14, fleur.y, r * 0.18, 0, Math.PI * 2);
+    ctx.arc(fleur.x + r * 0.14, fleur.y, r * 0.18, 0, Math.PI * 2);
+    ctx.arc(fleur.x, fleur.y - r * 0.16, r * 0.18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#f3b267";
+    ctx.beginPath();
+    ctx.arc(fleur.x, fleur.y, r * 0.07, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = COULEURS.fleur;
+  }
 }
-function dessinerBombe(ctx, objet, temps) {
-  const r = objet.rayon * (1 + 0.09 * Math.sin(temps * 9 + objet.pulsation));
-  ctx.rotate(objet.rotation * 0.4);
-  ctx.shadowColor = COULEURS.rouge;
-  ctx.shadowBlur = 22;
-  ctx.strokeStyle = COULEURS.rouge;
+function dessinerSabre(ctx, objet, temps) {
+  const r = objet.rayon;
+  ctx.rotate(objet.rotation);
+  ctx.strokeStyle = "#eee6d4";
+  ctx.lineWidth = 7;
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.65, r * 0.15);
+  ctx.quadraticCurveTo(r * 0.5, -r * 0.25, r * 1.8, -r * 0.95);
+  ctx.stroke();
+  ctx.strokeStyle = "#a8adb8";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.52, r * 0.03);
+  ctx.quadraticCurveTo(r * 0.55, -r * 0.37, r * 1.68, -r * 0.93);
+  ctx.stroke();
+  ctx.strokeStyle = COULEURS.noir;
+  ctx.lineWidth = 10;
+  ctx.beginPath();
+  ctx.moveTo(-r * 1.35, r * 0.7);
+  ctx.lineTo(-r * 0.45, r * 0.2);
+  ctx.stroke();
+  ctx.strokeStyle = COULEURS.violet;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(-r * 1.4, r * 0.32);
+  ctx.lineTo(-r * 1.2, r * 0.9);
+  ctx.moveTo(-r * 1.32, r * 0.45);
+  ctx.lineTo(-r * 0.58, r * 0.05);
+  ctx.stroke();
+  ctx.strokeStyle = "#8b6a43";
   ctx.lineWidth = 3;
   ctx.beginPath();
-  for (let i = 0; i < 8; i++) {
-    const angle = i * Math.PI / 4;
-    ctx.moveTo(Math.cos(angle) * r, Math.sin(angle) * r);
-    ctx.lineTo(Math.cos(angle) * (r + 7), Math.sin(angle) * (r + 7));
-  }
+  ctx.moveTo(-r * 0.35, r * 0.15);
+  ctx.lineTo(-r * 0.12, -r * 0.05);
+  ctx.stroke();
+}
+function dessinerOni(ctx, objet, temps) {
+  const r = objet.rayon * (1 + 0.09 * Math.sin(temps * 9 + objet.pulsation));
+  ctx.rotate(objet.rotation * 0.4);
+  ctx.strokeStyle = COULEURS.noir;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.75, -r * 0.65);
+  ctx.lineTo(-r * 0.5, -r * 1.25);
+  ctx.lineTo(-r * 0.1, -r * 0.75);
+  ctx.moveTo(r * 0.75, -r * 0.65);
+  ctx.lineTo(r * 0.5, -r * 1.25);
+  ctx.lineTo(r * 0.1, -r * 0.75);
   ctx.stroke();
   ctx.beginPath();
-  ctx.arc(0, 0, r, 0, Math.PI * 2);
-  ctx.fillStyle = "#1a0614";
+  ctx.ellipse(0, 0, r, r * 0.82, 0, 0, Math.PI * 2);
+  ctx.fillStyle = COULEURS.noir;
   ctx.fill();
-  ctx.strokeStyle = COULEURS.magenta;
+  ctx.strokeStyle = COULEURS.rouge;
   ctx.lineWidth = 2;
   ctx.stroke();
   ctx.fillStyle = COULEURS.rouge;
   ctx.beginPath();
-  ctx.arc(0, 0, r * 0.34, 0, Math.PI * 2);
+  ctx.ellipse(0, r * 0.08, r * 0.78, r * 0.7, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = COULEURS.noir;
+  ctx.beginPath();
+  ctx.ellipse(-r * 0.34, -r * 0.1, r * 0.13, r * 0.2, 0, 0, Math.PI * 2);
+  ctx.ellipse(r * 0.34, -r * 0.1, r * 0.13, r * 0.2, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = COULEURS.blanc;
   ctx.beginPath();
-  ctx.arc(-r * 0.12, -r * 0.12, r * 0.1, 0, Math.PI * 2);
+  ctx.arc(-r * 0.34, -r * 0.1, r * 0.05, 0, Math.PI * 2);
+  ctx.arc(r * 0.34, -r * 0.1, r * 0.05, 0, Math.PI * 2);
   ctx.fill();
+  ctx.strokeStyle = COULEURS.noir;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.48, r * 0.34);
+  ctx.quadraticCurveTo(0, r * 0.62, r * 0.48, r * 0.34);
+  ctx.moveTo(-r * 0.2, r * 0.34);
+  ctx.lineTo(-r * 0.28, r * 0.5);
+  ctx.moveTo(r * 0.2, r * 0.34);
+  ctx.lineTo(r * 0.28, r * 0.5);
+  ctx.stroke();
+  ctx.fillStyle = "#f3b267";
+  ctx.beginPath();
+  ctx.arc(-r * 0.5, -r * 0.52, r * 0.08, 0, Math.PI * 2);
+  ctx.arc(r * 0.5, -r * 0.52, r * 0.08, 0, Math.PI * 2);
+  ctx.fill();
+}
+function dessinerTorii(ctx, objet, temps) {
+  const r = objet.rayon;
+  ctx.rotate(Math.sin(temps * 2 + objet.pulsation) * 0.04);
+  ctx.strokeStyle = COULEURS.noir;
+  ctx.fillStyle = COULEURS.noir;
+  ctx.lineCap = "square";
+  ctx.lineWidth = r * 0.18;
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.9, r * 0.95);
+  ctx.lineTo(-r * 0.68, -r * 0.85);
+  ctx.moveTo(r * 0.9, r * 0.95);
+  ctx.lineTo(r * 0.68, -r * 0.85);
+  ctx.stroke();
+  ctx.lineWidth = r * 0.16;
+  ctx.beginPath();
+  ctx.moveTo(-r * 1.05, -r * 0.9);
+  ctx.quadraticCurveTo(0, -r * 1.18, r * 1.05, -r * 0.9);
+  ctx.stroke();
+  ctx.lineWidth = r * 0.11;
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.92, -r * 0.62);
+  ctx.quadraticCurveTo(0, -r * 0.85, r * 0.92, -r * 0.62);
+  ctx.stroke();
+  ctx.fillRect(-r * 1.15, -r * 0.98, r * 2.3, r * 0.12);
+  ctx.fillRect(-r * 0.86, r * 0.7, r * 0.18, r * 0.25);
+  ctx.fillRect(r * 0.68, r * 0.7, r * 0.18, r * 0.25);
+  ctx.strokeStyle = "#342b26";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.95, -r * 0.98);
+  ctx.lineTo(r * 0.95, -r * 0.98);
+  ctx.stroke();
 }
 function dessinerObjet(ctx, objet, temps) {
   ctx.save();
   ctx.translate(objet.x, objet.y);
-  if (objet.type === BOMBE) dessinerBombe(ctx, objet, temps);
-  else dessinerCristal(ctx, objet, temps);
+  if (objet.type === TORII) dessinerTorii(ctx, objet, temps);
+  else if (objet.type === ONI) dessinerOni(ctx, objet, temps);
+  else if (objet.type === SABRE) dessinerSabre(ctx, objet, temps);
+  else dessinerBranche(ctx, objet, temps);
   ctx.restore();
 }

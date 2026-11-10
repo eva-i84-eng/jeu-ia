@@ -10,6 +10,7 @@ une couleur bleu clair ;
 une rareté inférieure à celle du doré ;
 une durée de 4 secondes ;
 la durée du ralentissement ;
+
 Modifier jeu.js pour :
 
 ajouter le chronomètre chronoGlace ;
@@ -17,9 +18,8 @@ sélectionner la glace sans chevaucher la probabilité du doré ;
 activer l’effet lors de la capture ;
 ralentir le déplacement et la rotation des objets ;
 laisser automatiquement les vitesses normales revenir après 4 secondes.
-Modifier dessin.js pour dessiner la glace en bleu clair avec de petits éclats.
 
-Modifier audio.js pour ajouter un son de capture utilisant Web Audio.
+Modifier dessin.js pour dessiner la glace en bleu clair avec de petits éclats.
 
 Afficher le temps restant avec le système d’affichage existant, sans ajouter de bibliothèque ni de ressource externe.
 

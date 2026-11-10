@@ -51,7 +51,7 @@ function sonSuite(notes, duree, type, volume) {
     setTimeout(function () { note(notes[i], duree, type, volume, 0); }, i * 70);
   }
 }
-function sonCristal(multiplicateur) {
+function sonBranche(multiplicateur) {
   const base = 540 + Math.min(multiplicateur, 6) * 70;
   note(base, 0.1, "triangle", 0.2, 90);
   note(base * 1.5, 0.07, "sine", 0.07, 30);
@@ -59,7 +59,7 @@ function sonCristal(multiplicateur) {
 function sonDore() {
   sonSuite([660, 880, 1170, 1560], 0.12, "triangle", 0.16);
 }
-function sonBombe() {
+function sonOni() {
   note(120, 0.35, "sawtooth", 0.4, -90);
   note(70, 0.45, "square", 0.25, -30);
 }

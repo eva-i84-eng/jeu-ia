@@ -1,4 +1,4 @@
-// Logique de Pluie de Néon : état, entrées, règles et boucle du jeu.
+// Logique de la pluie de cerisiers : etat, entrees, regles et boucle du jeu.
 // Les éléments de la page.
 const canvas = document.getElementById("jeu");
 const ctx = canvas.getContext("2d");
@@ -11,6 +11,7 @@ const elementCombo = document.getElementById("combo");
 const elementComboValeur = document.getElementById("combo-valeur");
 const elementComboJauge = document.getElementById("combo-jauge");
 const elementVies = document.getElementById("vies").getElementsByTagName("i");
+const elementBouclier = document.getElementById("bouclier-hud");
 const boutonSon = document.getElementById("bouton-son");
 const boutonJouer = document.getElementById("bouton-jouer");
 const boutonRejouer = document.getElementById("bouton-rejouer");
@@ -26,8 +27,14 @@ let vies = REGLAGES.viesDepart;
 let niveau = 1;
 let tempsJeu = 0;
 let combo = 0;
-let cristaux = 0;
+let branches = 0;
 let chronoCombo = 0;
+let chronoBouclier = 0;
+let bouclierActif = false;
+let boucliersEnAttente = 0;
+let elementsTombes = 0;
+let toriiDeclenche = false;
+let viesPerdues = 0;
 let objets = [];
 let chronoSpawn = 0;
 let dernierTemps = 0;
@@ -52,14 +59,18 @@ function majHud() {
     elementVies[i].classList.toggle("perdue", i >= vies);
   }
   elementComboJauge.style.transform = "scaleX(" + Math.max(0, chronoCombo / REGLAGES.dureeCombo) + ")";
+  elementBouclier.textContent = bouclierActif ? "CASQUE ACTIF " + Math.ceil(chronoBouclier) + "S" : "CASQUE INACTIF";
+  elementBouclier.classList.toggle("actif", bouclierActif);
 }
 // Lancer, terminer et recommencer une partie.
 function demarrerPartie() {
   preparerAudio();
   etat = "jeu";
-  cristaux = 0;
+  branches = 0;
   score = 0; vies = REGLAGES.viesDepart; niveau = 1; tempsJeu = 0;
-  combo = 0; chronoCombo = 0; objets = []; chronoSpawn = 0.45;
+  combo = 0; chronoCombo = 0; chronoBouclier = 0; bouclierActif = false;
+  boucliersEnAttente = 0; elementsTombes = 0; toriiDeclenche = false; viesPerdues = 0;
+  objets = []; chronoSpawn = 0.45;
   panier.x = LARGEUR / 2 - panier.largeur / 2; panier.cibleX = null; panier.vitesse = 0;
   ecranTitre.classList.add("cache");
   ecranFin.classList.add("cache");
@@ -71,12 +82,11 @@ function terminerPartie() {
   etat = "fin";
   const nouveauRecord = score > record;
   if (nouveauRecord) { record = score; ecrireRecord(); }
-  creerParticules(panier.x + panier.largeur / 2, panier.y, COULEURS.cyan, 26, 280);
+  creerParticules(panier.x + panier.largeur / 2, panier.y, COULEURS.fleur, 26, 280);
   secouer(20);
   flasher(COULEURS.blanc, 0.4);
   finScore.textContent = score;
-  // compte les cristaux attrapés dans la variable cristaux
-  finScore.textContent += " (Cristaux chopés : " + cristaux + ")";
+  finScore.textContent += " (Branches attrapees : " + branches + ")";
   finRecord.textContent = record;
   badgeRecord.classList.toggle("cache", !nouveauRecord);
   scene.dataset.etat = "fin";
@@ -86,10 +96,12 @@ function terminerPartie() {
 // Créer les objets et régler la difficulté.
 function creerObjet() {
   const tirage = Math.random();
-  let type = CRISTAL;
-  if (tirage < Math.min(0.42, REGLAGES.hasardBombe + (niveau - 1) * 0.03)) type = BOMBE;
-  else if (tirage > 1 - REGLAGES.hasardDore) type = DORE;
-  const rayon = type === DORE ? 17 : type === BOMBE ? 15 : 13;
+  let type = BRANCHE;
+  if (tirage < Math.min(0.42, REGLAGES.hasardOni + (niveau - 1) * 0.03)) type = ONI;
+  else if (tirage > 1 - REGLAGES.hasardSabre) type = SABRE;
+  const rayon = type === SABRE ? 22 : type === ONI ? 21 : 15;
+  elementsTombes += 1;
+  if (!toriiDeclenche && elementsTombes >= REGLAGES.seuilTorii) declencherTorii();
   const vitesse = Math.min(REGLAGES.vitesseChuteMax, REGLAGES.vitesseChute + (niveau - 1) * 28);
   objets.push({
     type: type, x: hasard(rayon + 12, LARGEUR - rayon - 12), y: -rayon - 8, rayon: rayon,
@@ -116,36 +128,79 @@ function estAttrape(objet) {
     objet.x - objet.rayon * 0.5 <= panier.x + panier.largeur;
 }
 function toucherObjet(objet) {
-  if (objet.type === BOMBE) {
-    creerParticules(objet.x, objet.y, COULEURS.magenta, 28, 320);
-    perdreVie(objet.x, objet.y, true);
+  if (objet.type === TORII) {
+    vies = REGLAGES.viesDepart;
+    ajouterTexte(objet.x, objet.y - 20, "TORII : VIES RESTAUREES", COULEURS.or);
+    flasher(COULEURS.or, 0.22);
+    sonNiveau();
+    if (viesPerdues === 0) {
+      boucliersEnAttente += 2;
+      activerBouclierSuivant();
+    }
+    return;
+  }
+  if (objet.type === ONI) {
+    creerParticules(objet.x, objet.y, COULEURS.rouge, 28, 320);
+    if (bouclierActif) {
+      bouclierActif = false;
+      chronoBouclier = 0;
+      ajouterTexte(objet.x, objet.y - 10, "MASQUE ABSORBE", COULEURS.violet);
+      creerParticules(objet.x, objet.y, COULEURS.violet, 22, 240);
+      sonClic();
+      activerBouclierSuivant();
+    } else perdreVie(objet.x, objet.y, true);
     return;
   }
   combo += 1;
   chronoCombo = REGLAGES.dureeCombo;
   const multi = multiplicateur();
-  const points = (objet.type === DORE ? 50 : 10) * multi;
-  const couleur = objet.type === DORE ? COULEURS.or : COULEURS.cyan;
+  const points = (objet.type === SABRE ? 50 : 10) * multi;
+  const couleur = objet.type === SABRE ? COULEURS.or : COULEURS.fleur;
   score += points;
-  // compte les cristaux attrapés dans la variable cristaux
-  if (objet.type === CRISTAL) cristaux += 1;
-  creerParticules(objet.x, objet.y, couleur, objet.type === DORE ? 24 : 14, 280);
+  if (objet.type === BRANCHE) branches += 1;
+  creerParticules(objet.x, objet.y, couleur, objet.type === SABRE ? 24 : 14, 280);
   ajouterTexte(objet.x, objet.y - 10, "+" + points, couleur);
-  if (objet.type === DORE) { sonDore(); flasher(COULEURS.or, 0.18); }
-  else { sonCristal(multi); flasher(COULEURS.cyan, 0.06); }
+  if (objet.type === SABRE) { sonDore(); flasher(COULEURS.or, 0.18); }
+  else { sonBranche(multi); flasher(COULEURS.fleur, 0.06); }
   secouer(3);
 }
-function perdreVie(x, y, bombe) {
+function perdreVie(x, y, oni) {
   vies -= 1;
+  viesPerdues += 1;
   combo = 0;
   chronoCombo = 0;
   creerParticules(x, y, COULEURS.rouge, 24, 260);
   secouer(12);
   flasher(COULEURS.rouge, 0.3);
   ajouterTexte(panier.x + panier.largeur / 2, panier.y - 28, "-1 VIE", COULEURS.rouge);
-  if (bombe) sonBombe();
+  if (oni) sonOni();
   else sonPerte();
-  if (vies <= 0) terminerPartie();
+  if (vies > 0) ajouterBouclier();
+  else terminerPartie();
+}
+function activerBouclierSuivant() {
+  if (boucliersEnAttente <= 0 || etat !== "jeu") return;
+  boucliersEnAttente -= 1;
+  bouclierActif = true;
+  chronoBouclier = REGLAGES.dureeBouclier;
+}
+function ajouterBouclier() {
+  boucliersEnAttente += 1;
+  if (!bouclierActif) activerBouclierSuivant();
+}
+function declencherTorii() {
+  toriiDeclenche = true;
+  const rayon = 42;
+  objets.push({
+    type: TORII,
+    x: LARGEUR / 2,
+    y: -rayon - 20,
+    rayon: rayon,
+    vitesse: Math.min(REGLAGES.vitesseChuteMax, REGLAGES.vitesseChute + (niveau - 1) * 28) * 0.8,
+    rotation: 0,
+    vitesseRotation: 0,
+    pulsation: 0
+  });
 }
 // Mise à jour de la partie à chaque image.
 function mettreAJour(dt) {
@@ -164,6 +219,15 @@ function mettreAJour(dt) {
     chronoCombo -= dt;
     if (chronoCombo <= 0) { chronoCombo = 0; combo = 0; }
   }
+  if (bouclierActif) {
+    chronoBouclier -= dt;
+    if (chronoBouclier <= 0) {
+      bouclierActif = false;
+      chronoBouclier = 0;
+      ajouterTexte(panier.x + panier.largeur / 2, panier.y - 30, "CASQUE DISSIPE", COULEURS.violet);
+      activerBouclierSuivant();
+    }
+  }
   majPanier(dt);
   chronoSpawn -= dt;
   if (chronoSpawn <= 0) {
@@ -174,7 +238,7 @@ function mettreAJour(dt) {
     const objet = objets[i];
     objet.y += objet.vitesse * dt;
     objet.rotation += objet.vitesseRotation * dt;
-    if (objet.type === DORE && Math.random() < dt * 18) {
+    if (objet.type === SABRE && Math.random() < dt * 18) {
       creerParticules(objet.x, objet.y, COULEURS.or, 1, 30);
     }
     if (estAttrape(objet)) {
@@ -182,8 +246,8 @@ function mettreAJour(dt) {
       toucherObjet(objet);
     } else if (objet.y - objet.rayon > HAUTEUR + 20) {
       objets.splice(i, 1);
-      if (objet.type === CRISTAL) perdreVie(objet.x, HAUTEUR - 30, false);
-      else if (objet.type === DORE) ajouterTexte(objet.x, HAUTEUR - 40, "CRISTAL DORÉ PERDU", COULEURS.or);
+      if (objet.type === BRANCHE) perdreVie(objet.x, HAUTEUR - 30, false);
+      else if (objet.type === SABRE) ajouterTexte(objet.x, HAUTEUR - 40, "SABRE PERDU", COULEURS.or);
     }
   }
   majHud();
@@ -198,7 +262,7 @@ function dessiner() {
     ctx.translate(hasard(-forceSecousse, forceSecousse), hasard(-forceSecousse, forceSecousse));
   }
   if (etat !== "titre") {
-    dessinerPanier(ctx, panier, temps);
+    dessinerPanier(ctx, panier, temps, bouclierActif);
     for (const objet of objets) dessinerObjet(ctx, objet, temps);
   }
   dessinerEffets(ctx);
