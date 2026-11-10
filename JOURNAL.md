@@ -11,12 +11,12 @@ Règle : tu colles ici le texte exact de tes prompts (copier-coller, pas de capt
 - Commentaire ou début de code que j'ai écrit :
 
 ```
-(colle-le ici)
+// compte les cristaux attrapés dans la variable cristaux
 ```
 
-- Ce que Copilot a proposé :
-- Ce que j'ai accepté, modifié ou refusé, et pourquoi :
-- Comment j'ai vérifié que ça marche :
+- Ce que Copilot a proposé :  if (objet.type === CRISTAL) cristaux += 1;
+- Ce que j'ai accepté, modifié ou refusé, et pourquoi : j'ai ajouté let cristaux = 0; et   cristaux = 0; dans la fonction demarrer partie
+- Comment j'ai vérifié que ça marche : vérifier que le jeu marche et les consoles du terminal de chrome et de vscode
 
 ## Défi 2 - Ask
 
